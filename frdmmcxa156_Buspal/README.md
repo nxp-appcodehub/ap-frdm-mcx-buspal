@@ -1,0 +1,155 @@
+# NXP Application Code Hub
+[<img src="https://mcuxpresso.nxp.com/static/icon/nxp-logo-color.svg" width="100"/>](https://www.nxp.com)
+
+## BusPal Application for FRDM MCX Families
+
+This project contains different folders, one for each supported BusPal device:
+
+ - **FRDM-MCXW71**
+ - **FRDM-MCXA156**
+
+## BusPal
+
+Buspal acts as a bus translator with an established connection with blhost over UART and with the target device over I2C, SPI or CAN, and assists blhost in carrying out commands and responses from the USB target device.
+
+This software pack provides the buspal application ported to different MCX device families, as an extension to the original BusPal application provided with the Kinetis Bootloader package, available only for selected platforms.
+
+For more details on the BusPal software tool and the MCU bootloader for NXP MCUs, refer to the following link: https://www.nxp.com/design/design-center/software/development-software/mcuxpresso-software-and-tools-/mcu-bootloader-for-nxp-microcontrollers:MCUBOOT
+
+
+#### Boards: FRDM-MCXA156
+#### Categories: Bridge, Tools
+#### Peripherals: CAN, I2C, SPI, UART
+#### Toolchains: MCUXpresso IDE
+
+## Table of Contents
+1. [Software](#step1)
+2. [Hardware](#step2)
+3. [Setup](#step3)
+4. [Results](#step4)
+5. [Support](#step6)
+6. [Release Notes](#step7)
+
+## 1. Software<a name="step1"></a>
+This project was implemented using [MCUXpresso IDE](https://www.nxp.com/design/design-center/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE) version 11.10.0, and [FRDM-MCXA156 SDK](https://mcuxpresso.nxp.com/en/builder?hw=FRDM-MCXA156) version 2.16.000.
+
+To communicate with BusPal device, [SPSDK](https://www.nxp.com/design/design-center/software/development-software/secure-provisioning-sdk-spsdk:SPSDK) is used for I2C and SPI interfaces. To communicate via CAN, [blhost](https://www.nxp.com/webapp/Download?colCode=blhost_2.6.7&appType=license) needs to be used.
+
+## 2. Hardware<a name="step2"></a>
+This project uses the following board to act as BusPal:
+ - [FRDM-MCXA156](https://www.nxp.com/design/design-center/development-boards-and-designs/general-purpose-mcus/frdm-development-board-for-mcx-a144-5-6-a154-5-6-mcus:FRDM-MCXA156)
+
+ Additional hardware required:
+  - Host Computer
+  - Target MCU
+
+## 3. Setup<a name="step3"></a>
+
+### 3.1 SW Setup
+
+#### 3.1.1 Download and Install required Software(s)
+
+  - Download and Install [MCUXpresso](https://www.nxp.com/design/design-center/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE) 11.10.0 or newer
+  - Download [FRDM-MCXA156 SDK](https://mcuxpresso.nxp.com/en/builder?hw=FRDM-MCXA156) version 2.16.000
+  - Download and install [SPSDK](https://www.nxp.com/design/design-center/software/development-software/secure-provisioning-sdk-spsdk:SPSDK) and/or [blhost](https://www.nxp.com/webapp/Download?colCode=blhost_2.6.7&appType=license) as required.
+
+#### 3.1.2 Clone the Repository to get the BusPal Application
+
+ - Open MCUXpresso
+ - In the Quickstart Panel, click on Import from Application Code Hub
+ - Type the name of the project in the search bar, and select it
+ - Click on "GitHub link", then Next
+ - Select the corresponding branch for the appropriate BusPal device
+ - Click on Next on the following windows, and finally click on Finish
+
+#### 3.1.3 Build the Project and Flash BusPal into device
+
+ - Right click on the project and then on "Build Project"
+ - Plug the FRDM-MCXW71 board to the PC using the USB-C port marked as "MCU-Link USB"
+ - Right click on the project and select "Debug As". Select MCUXpresso IDE LinkServer (inc. CMSIS DAP) probes
+ - Debugger will start downloading the program to device. MCU-LINK probes will be identified. Click "OK" to continue
+ - Click on "Resume" button or press F8 key on your keyboard to continue running the downloaded program on device
+ - Click on "Terminate" button or press CTRL + F2 to terminate the debug session
+ - Reset the board by pressing SW1 or by unplugging and plugging again to the PC
+
+### 3.2 HW Setup
+
+#### 3.2.1 Boot Target MCU into ISP mode
+To stablish a link between a BusPal device and a target MCU, the latter needs to be booted into ISP mode. Each NXP device has its own procedure to follow the ISP path, please refer to the documentation of the specific target MCU that will be used and follow the instructions on how to boot the device into ISP mode.
+
+#### 3.2.2 Connect BusPal to target MCU
+
+Depending on the desired communication interface, the user should use different pins on the FRDM-MCXA156 board. Follow the table below to use the pins that correspond to the interface selected.
+
+| I2C                    | SPI                   | CAN               |
+|:----------------------:|:---------------------:|:-----------------:|
+| J5 pin 5 (LPI2C3_SCL)  | J6 pin 3 (LPSPI0_PCS) | J22 pin 2 (CAN_H) |
+| J5 pin 6 (LPI2C3_SDA)  | J6 pin 4 (LPSPI0_SCK) | J22 pin 4 (CAN_L) |
+|                        | J6 pin 5 (LPSPI0_SDI) |
+|                        | J6 pin 6 (LPSPI0_SDO) |
+
+I2C pins in FRDM-MCXA156 board:
+![alt text](images/FRDM-MCXA156_I2C.jpg)
+
+SPI pins in FRDM-MCXA156 board:
+![alt text](images/FRDM-MCXA156_SPI.jpg)
+
+CAN pins in FRDM-MCXA156 board:
+![alt text](images/FRDM-MCXA156_CAN.jpg)
+
+## 4. Results<a name="step4"></a>
+After following the procedure to boot Target MCU into ISP mode, and connecting the appropriate BusPal interface, the host tool will be able to communicate to the target MCU as shown:
+
+**I2C**
+![alt text](images/command_i2c.PNG)
+
+**SPI**
+![alt text](images/command_spi.PNG)
+
+**CAN**
+![alt text](images/command_can.PNG)
+ > **Note**: Make sure to change the COM port to the appropriate number that the host PC has dedicated for the BusPal device.
+ > **Note**: Before switching to a different serial interface, target MCU needs to reset and re-enter ISP mode.
+
+## 5. Support<a name="step6"></a>
+
+#### Project Metadata
+
+<!----- Boards ----->
+[![Board badge](https://img.shields.io/badge/Board-FRDM&ndash;MCXW71-blue)]()
+[![Board badge](https://img.shields.io/badge/Board-FRDM&ndash;MCXA156-blue)]()
+
+<!----- Categories ----->
+[![Category badge](https://img.shields.io/badge/Category-BRIDGE-yellowgreen)](https://github.com/search?q=org%3Anxp-appcodehub+bridge+in%3Areadme&type=Repositories)
+[![Category badge](https://img.shields.io/badge/Category-TOOLS-yellowgreen)](https://github.com/search?q=org%3Anxp-appcodehub+tools+in%3Areadme&type=Repositories)
+
+<!----- Peripherals ----->
+[![Peripheral badge](https://img.shields.io/badge/Peripheral-CAN-yellow)](https://github.com/search?q=org%3Anxp-appcodehub+can+in%3Areadme&type=Repositories)
+[![Peripheral badge](https://img.shields.io/badge/Peripheral-I2C-yellow)](https://github.com/search?q=org%3Anxp-appcodehub+i2c+in%3Areadme&type=Repositories)
+[![Peripheral badge](https://img.shields.io/badge/Peripheral-SPI-yellow)](https://github.com/search?q=org%3Anxp-appcodehub+spi+in%3Areadme&type=Repositories)
+[![Peripheral badge](https://img.shields.io/badge/Peripheral-UART-yellow)](https://github.com/search?q=org%3Anxp-appcodehub+uart+in%3Areadme&type=Repositories)
+
+<!----- Toolchains ----->
+[![Toolchain badge](https://img.shields.io/badge/Toolchain-MCUXPRESSO%20IDE-orange)](https://github.com/search?q=org%3Anxp-appcodehub+mcux+in%3Areadme&type=Repositories)
+
+Questions regarding the content/correctness of this example can be entered as Issues within this GitHub repository.
+
+>**Warning**: For more general technical questions regarding NXP Microcontrollers and the difference in expected functionality, enter your questions on the [NXP Community Forum](https://community.nxp.com/)
+
+[![Follow us on Youtube](https://img.shields.io/badge/Youtube-Follow%20us%20on%20Youtube-red.svg)](https://www.youtube.com/NXP_Semiconductors)
+[![Follow us on LinkedIn](https://img.shields.io/badge/LinkedIn-Follow%20us%20on%20LinkedIn-blue.svg)](https://www.linkedin.com/company/nxp-semiconductors)
+[![Follow us on Facebook](https://img.shields.io/badge/Facebook-Follow%20us%20on%20Facebook-blue.svg)](https://www.facebook.com/nxpsemi/)
+[![Follow us on Twitter](https://img.shields.io/badge/X-Follow%20us%20on%20X-black.svg)](https://x.com/NXP)
+
+## 6. Release Notes<a name="step7"></a>
+| Version | Description / Update                           | Date                        |
+|:-------:|------------------------------------------------|----------------------------:|
+| 1.0     | Initial release on Application Code Hub        | September 23<sup>rd</sup> 2024 |
+
+<small>
+<b>Trademarks and Service Marks</b>: There are a number of proprietary logos, service marks, trademarks, slogans and product designations ("Marks") found on this Site. By making the Marks available on this Site, NXP is not granting you a license to use them in any fashion. Access to this Site does not confer upon you any license to the Marks under any of NXP or any third party's intellectual property rights. While NXP encourages others to link to our URL, no NXP trademark or service mark may be used as a hyperlink without NXP’s prior written permission. The following Marks are the property of NXP. This list is not comprehensive; the absence of a Mark from the list does not constitute a waiver of intellectual property rights established by NXP in a Mark.
+</small>
+<br>
+<small>
+NXP, the NXP logo, NXP SECURE CONNECTIONS FOR A SMARTER WORLD, Airfast, Altivec, ByLink, CodeWarrior, ColdFire, ColdFire+, CoolFlux, CoolFlux DSP, DESFire, EdgeLock, EdgeScale, EdgeVerse, elQ, Embrace, Freescale, GreenChip, HITAG, ICODE and I-CODE, Immersiv3D, I2C-bus logo , JCOP, Kinetis, Layerscape, MagniV, Mantis, MCCI, MIFARE, MIFARE Classic, MIFARE FleX, MIFARE4Mobile, MIFARE Plus, MIFARE Ultralight, MiGLO, MOBILEGT, NTAG, PEG, Plus X, POR, PowerQUICC, Processor Expert, QorIQ, QorIQ Qonverge, RoadLink wordmark and logo, SafeAssure, SafeAssure logo , SmartLX, SmartMX, StarCore, Symphony, Tower, TriMedia, Trimension, UCODE, VortiQa, Vybrid are trademarks of NXP B.V. All other product or service names are the property of their respective owners. © 2021 NXP B.V.
+</small>

@@ -1,0 +1,8 @@
+Package:              ap-frdm-mcx-buspal
+Version:              1.0
+Outgoing License:     BSD-3-Clause
+License file:         License.txt
+Description:          Allows the user to communicate to any NXP board in ISP mode, using any of its supported interfaces (I2C, SPI, CAN)
+Release location:     https://github.com/nxp-appcodehub/ap-frdm-mcx-buspal
+Origin:               NXP (BSD-3-Clause)    
+                      CMSIS v5.9.0 (Apache-2.0) - https://github.com/ARM-software/CMSIS_5/releases/tag/5.9.0

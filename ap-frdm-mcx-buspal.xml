@@ -1,0 +1,32 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="sw_pack" format="projectfile" versionSchema="1.0.0" name="FRDM MCX Buspal" uuid="3c09858a-4fdb-4d7e-ac65-86e185a33b84">
+    <display_title>
+        Buspal Application for FRDM MCX Families
+    </display_title>
+    <overview>
+        <![CDATA[This software pack provides the buspal application ported to different MCX device families. Buspal
+is an embedded software tool that is available as a companion to blhost. The
+tool acts as a bus translator with an established connection with blhost over
+UART and with the target device over I2C, SPI or CAN, and assists blhost in
+carrying out commands and responses from the USB target device.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="mcux"></toolchain>
+    </toolchains>
+    <families>
+        <family name="mcx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="FRDM-MCXW71"></hw>
+        <hw id="FRDM-MCXA156"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="can"></peripheral>
+        <peripheral name="i2c"></peripheral>
+        <peripheral name="spi"></peripheral>
+        <peripheral name="uart"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="bridge"></category>
+        <category name="tools"></category>
+    </categories>
+</data:item>
