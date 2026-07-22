@@ -166,9 +166,9 @@ typedef struct _flexcan_transfer_info
     uint32_t txId;               //!< tx id
     uint32_t rx_mailbox_num;     //!< rx mb number
     uint32_t tx_mailbox_num;     //!< tx mb number
-    uint8_t rx_buf[64];          //!< rx buffer
-    uint8_t rx_buf_write_index;  //!< rx buffer write index
-    uint8_t rx_buf_read_index;   //!< rx buffer read index
+    uint8_t rx_buf[512];          //!< rx buffer
+    volatile uint32_t rx_buf_write_index;  //!< rx buffer write index
+    uint32_t  rx_buf_read_index;   //!< rx buffer read index
 } flexcan_transfer_info_t;
 
 
@@ -191,7 +191,8 @@ uint8_t getBuffOffset(uint8_t offset);
 //----------------------------------------------------------------------
 
 //! @brief sending host bytes command process
-void write_bytes_to_host(uint8_t * src, uint8_t lenght);
+void write_bytes_to_host(uint8_t * src, uint32_t lenght);
+
 
 //! @brief receiving host get bytes command process
 uint32_t get_bytes_received_from_host(void);

@@ -134,6 +134,13 @@ const uint32_t bit_rate_table[] = {
 
 void init_hardware(void)
 {
+    /* Start the microseconds timer (SysTick). This must be done before any
+	 * code relies on microseconds_get_ticks(), for example the CAN receive
+	 * timeout in read_can_data(). Without it SysTick never runs, the tick
+	 * value never changes, and the CAN read loop can never time out, which
+	 * causes the firmware to hang when the slave does not reply. */
+	microseconds_init();
+
 	/* Init peripherals*/
 	init_uart(UART_HOST);
 	init_spi(LPSPI_INSTANCE);
@@ -202,7 +209,7 @@ void uart_rx_callback(uint8_t byte)
  * Description   : sending host bytes command process
  *
  *END**************************************************************************/
-void write_bytes_to_host(uint8_t * src, uint8_t lenght)
+void write_bytes_to_host(uint8_t * src, uint32_t lenght)
 {
 	LPUART_WriteBlocking((LPUART_Type*)g_lpuartBaseAddr[UART_HOST], src, lenght);
 }
@@ -469,7 +476,7 @@ void send_can_data(uint8_t *src, uint32_t writeLength)
             sentCnt += 8;
         }
 
-        FLEXCAN_Send(0, 9, &s_flexcanInfo.tx_info, s_flexcanInfo.txId, sendPtr, 1000);
+        FLEXCAN_Send(0, 9, &s_flexcanInfo.tx_info, s_flexcanInfo.txId, (uint8_t *) sendPtr, 1000);
 
         sendPtr += s_flexcanInfo.tx_info.data_length;
     }
@@ -632,7 +639,7 @@ void FLEXCAN_IRQHandler(uint8_t instance)
 void receive_can_data(uint8_t data, uint32_t instance)
 {
     s_flexcanInfo.rx_buf[s_flexcanInfo.rx_buf_write_index++] = data;
-    s_flexcanInfo.rx_buf_write_index &= 0x3f;
+    s_flexcanInfo.rx_buf_write_index &= 0x1FF;
 }
 
 /*FUNCTION**********************************************************************
@@ -655,7 +662,7 @@ void reset_can_buffer(void)
  *END**************************************************************************/
 void read_can_data(uint8_t *dest, uint32_t readLength)
 {
-    uint8_t received_cnt = 0;
+    uint32_t received_cnt = 0;
     uint64_t timeoutTicks = microseconds_get_ticks() + 20875 * 500; // 5ms time out
 
     while ((received_cnt < readLength) && (microseconds_get_ticks() < timeoutTicks))
@@ -663,7 +670,7 @@ void read_can_data(uint8_t *dest, uint32_t readLength)
         if (s_flexcanInfo.rx_buf_read_index != s_flexcanInfo.rx_buf_write_index)
         {
             dest[received_cnt++] = s_flexcanInfo.rx_buf[s_flexcanInfo.rx_buf_read_index++];
-            s_flexcanInfo.rx_buf_read_index &= 0x3f;
+            s_flexcanInfo.rx_buf_read_index &= 0x1FF;
         }
     }
 }
